@@ -136,7 +136,7 @@
             content: '';
             position: absolute;
             top: -50%;
-            left: -50%;
+            left: -100%;
             width: 200%;
             height: 200%;
             background: linear-gradient(
@@ -145,13 +145,14 @@
                 transparent,
                 transparent,
                 var(--neon-red),
+                var(--neon-pink),
                 transparent,
                 transparent,
                 transparent
             );
             transform: rotate(45deg);
-            animation: btnLight 3s linear infinite;
-            opacity: 0.5;
+            animation: btnLight 2s linear infinite;
+            opacity: 0.7;
         }
         
         .wheel-container {
@@ -160,46 +161,65 @@
         }
         
         .wheel-btn {
-            padding: 10px 20px;
+            padding: 15px 30px;
             background: var(--neon-blue);
             border: none;
-            border-radius: 5px;
+            border-radius: 50px;
             color: white;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px var(--neon-blue);
             transition: all 0.3s;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .wheel-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .wheel-btn:hover::before {
+            left: 100%;
         }
         
         .wheel-btn:hover {
-            box-shadow: 0 0 20px var(--neon-blue);
+            box-shadow: 0 0 30px var(--neon-blue);
             transform: scale(1.05);
         }
         
         .wheel {
-            width: 300px;
-            height: 300px;
+            width: 350px;
+            height: 350px;
             position: relative;
             margin: 0 auto;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 0 30px var(--neon-pink), 0 0 60px var(--neon-pink);
+            transition: transform 5s cubic-bezier(0.1, 0.7, 0.1, 1);
             transform: rotate(0deg);
         }
         
         .wheel-center {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: #111;
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            box-shadow: 0 0 10px black;
+            box-shadow: 0 0 15px black, inset 0 0 10px #333;
         }
         
         .wheel-section {
@@ -213,19 +233,21 @@
             font-weight: bold;
             color: white;
             text-shadow: 0 0 5px black;
+            font-size: 1.2rem;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
         }
         
         .wheel-pointer {
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid var(--neon-red);
-            filter: drop-shadow(0 0 5px var(--neon-red));
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid var(--neon-red);
+            filter: drop-shadow(0 0 10px var(--neon-red));
             z-index: 5;
         }
         
@@ -237,6 +259,15 @@
             height: 100%;
             pointer-events: none;
             z-index: -1;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--neon-red);
+            opacity: 0;
+            z-index: 100;
         }
         
         @keyframes glow {
@@ -267,11 +298,11 @@
         }
         
         @keyframes btnLight {
-            from {
-                transform: rotate(45deg) translate(-30%, -30%);
+            0% {
+                left: -100%;
             }
-            to {
-                transform: rotate(45deg) translate(30%, 30%);
+            100% {
+                left: 100%;
             }
         }
         
@@ -282,6 +313,17 @@
             }
             to {
                 transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
                 opacity: 0;
             }
         }
@@ -310,8 +352,8 @@
             }
             
             .wheel {
-                width: 250px;
-                height: 250px;
+                width: 280px;
+                height: 280px;
             }
         }
     </style>
@@ -325,6 +367,7 @@
     </div>
     
     <div class="particles" id="particles"></div>
+    <div id="confetti-container"></div>
     
     <div class="container" id="main-content">
         <div class="logo">A</div>
@@ -339,7 +382,7 @@
         </div>
         
         <div class="wheel-container" id="wheel-container">
-            <button class="wheel-btn" id="spin-btn">Крутить колесо</button>
+            <button class="wheel-btn" id="spin-btn">КРУТИТЬ КОЛЕСО УДАЧИ</button>
             <div class="wheel-pointer"></div>
             <div class="wheel" id="wheel">
                 <div class="wheel-center"></div>
@@ -385,8 +428,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const wheel = document.getElementById('wheel');
             const spinBtn = document.getElementById('spin-btn');
-            const prizes = ['10% OFF', 'TRY AGAIN', 'FREE', '50% OFF', 'PRIZE', 'LUCKY'];
-            const colors = ['#ff0000', '#ff6600', '#ffcc00', '#00ff00', '#0066ff', '#cc00ff'];
+            const prizes = ['10% OFF', 'PRIZE', 'FREE', '50% OFF', 'LUCKY', 'BONUS', 'WIN!', 'TRY AGAIN'];
+            const colors = [
+                '#ff0000', '#ff3300', '#ff6600', '#ff9900', 
+                '#ffcc00', '#ffff00', '#ccff00', '#00ff00'
+            ];
             
             // Создаем секции колеса
             prizes.forEach((prize, index) => {
@@ -394,27 +440,78 @@
                 section.className = 'wheel-section';
                 section.textContent = prize;
                 section.style.backgroundColor = colors[index];
-                section.style.transform = `rotate(${index * 60}deg)`;
-                section.style.clipPath = 'polygon(0 0, 100% 0, 100% 100%)';
+                const angle = (360 / prizes.length) * index;
+                section.style.transform = `rotate(${angle}deg)`;
+                
+                // Добавляем градиент для красоты
+                section.style.background = `linear-gradient(135deg, ${colors[index]}, ${darkenColor(colors[index], 20)})`;
+                
                 wheel.appendChild(section);
             });
             
             let canSpin = true;
+            let currentRotation = 0;
             
             spinBtn.addEventListener('click', () => {
                 if (!canSpin) return;
                 
                 canSpin = false;
-                const randomDegree = Math.floor(Math.random() * 360) + 1440; // Минимум 4 полных оборота
-                wheel.style.transform = `rotate(${randomDegree}deg)`;
+                spinBtn.disabled = true;
+                
+                // Минимум 10 полных оборотов + случайный угол
+                const spinDegrees = 3600 + Math.floor(Math.random() * 360);
+                currentRotation += spinDegrees;
+                
+                wheel.style.transform = `rotate(${currentRotation}deg)`;
+                
+                // Эффект ускорения/замедления
+                spinBtn.style.transform = 'scale(0.95)';
+                spinBtn.style.boxShadow = '0 0 10px var(--neon-blue)';
                 
                 setTimeout(() => {
-                    const actualDegree = randomDegree % 360;
-                    const prizeIndex = Math.floor(((360 - actualDegree) % 360) / 60);
-                    alert(`Вы выиграли: ${prizes[prizeIndex]}!`);
-                    canSpin = true;
-                }, 4000);
+                    spinBtn.style.transform = 'scale(1.05)';
+                    spinBtn.style.boxShadow = '0 0 30px var(--neon-blue)';
+                }, 2500);
+                
+                setTimeout(() => {
+                    const normalizedRotation = currentRotation % 360;
+                    const sectionAngle = 360 / prizes.length;
+                    const prizeIndex = Math.floor(((360 - normalizedRotation) % 360) / sectionAngle);
+                    
+                    // Конфетти при выигрыше
+                    createConfetti();
+                    
+                    // Вибрируем колесо
+                    wheel.style.transform = `rotate(${currentRotation}deg) translateX(5px)`;
+                    setTimeout(() => {
+                        wheel.style.transform = `rotate(${currentRotation}deg) translateX(-5px)`;
+                        setTimeout(() => {
+                            wheel.style.transform = `rotate(${currentRotation}deg) translateX(0)`;
+                            
+                            setTimeout(() => {
+                                alert(`🎉 Вы выиграли: ${prizes[prizeIndex]}! 🎉`);
+                                canSpin = true;
+                                spinBtn.disabled = false;
+                            }, 500);
+                        }, 100);
+                    }, 100);
+                }, 5000);
             });
+            
+            // Функция для затемнения цвета
+            function darkenColor(color, percent) {
+                const num = parseInt(color.replace('#', ''), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) - amt;
+                const G = (num >> 8 & 0x00FF) - amt;
+                const B = (num & 0x0000FF) - amt;
+                return '#' + (
+                    0x1000000 +
+                    (R < 0 ? 0 : R) * 0x10000 +
+                    (G < 0 ? 0 : G) * 0x100 +
+                    (B < 0 ? 0 : B)
+                ).toString(16).slice(1);
+            }
         });
         
         // Создание частиц
@@ -441,6 +538,32 @@
             }
         }
         
+        // Создание конфетти
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 5 + 3}px`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.opacity = '1';
+                
+                const animationDuration = Math.random() * 3 + 2;
+                confetti.style.animation = `confettiFall ${animationDuration}s linear forwards`;
+                
+                container.appendChild(confetti);
+                
+                // Удаляем конфетти после анимации
+                setTimeout(() => {
+                    confetti.remove();
+                }, animationDuration * 1000);
+            }
+        }
+        
         // Эффект при наведении на кнопки
         document.querySelectorAll('.btn').forEach(btn => {
             btn.addEventListener('mouseenter', () => {
@@ -450,7 +573,7 @@
                     color += letters[Math.floor(Math.random() * 16)];
                 }
                 btn.style.borderColor = color;
-                btn.style.boxShadow = `0 0 10px ${color}, inset 0 0 5px ${color}`;
+                btn.style.boxShadow = `0 0 15px ${color}, inset 0 0 10px ${color}`;
             });
             
             btn.addEventListener('mouseleave', () => {
