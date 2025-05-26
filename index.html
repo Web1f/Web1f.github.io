@@ -11,6 +11,7 @@
             --neon-red: #ff0000;
             --neon-pink: #ff00aa;
             --neon-blue: #00aaff;
+            --neon-green: #00ff00;
             --bg-color: #0a0a0a;
         }
         
@@ -155,21 +156,22 @@
             opacity: 0.7;
         }
         
-        .wheel-container {
+        .dice-container {
             margin: 40px 0;
             display: none;
+            perspective: 1000px;
         }
         
-        .wheel-btn {
+        .dice-btn {
             padding: 15px 30px;
-            background: var(--neon-blue);
+            background: var(--neon-green);
             border: none;
             border-radius: 50px;
             color: white;
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 30px;
-            box-shadow: 0 0 15px var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-green);
             transition: all 0.3s;
             font-size: 1.2rem;
             position: relative;
@@ -177,7 +179,7 @@
             z-index: 1;
         }
         
-        .wheel-btn::before {
+        .dice-btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -188,68 +190,89 @@
             transition: 0.5s;
         }
         
-        .wheel-btn:hover::before {
+        .dice-btn:hover::before {
             left: 100%;
         }
         
-        .wheel-btn:hover {
-            box-shadow: 0 0 30px var(--neon-blue);
+        .dice-btn:hover {
+            box-shadow: 0 0 30px var(--neon-green);
             transform: scale(1.05);
         }
         
-        .wheel {
-            width: 350px;
-            height: 350px;
+        .dice {
+            width: 100px;
+            height: 100px;
             position: relative;
             margin: 0 auto;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: 0 0 30px var(--neon-pink), 0 0 60px var(--neon-pink);
-            transition: transform 5s cubic-bezier(0.1, 0.7, 0.1, 1);
-            transform: rotate(0deg);
+            transform-style: preserve-3d;
+            transition: transform 2s cubic-bezier(0.1, 0.7, 0.1, 1);
         }
         
-        .wheel-center {
+        .dice-face {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #111;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            box-shadow: 0 0 15px black, inset 0 0 10px #333;
-        }
-        
-        .wheel-section {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            transform-origin: bottom right;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border: 2px solid #333;
+            border-radius: 15px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 0 5px black;
-            font-size: 1.2rem;
-            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            align-items: center;
+            font-size: 2.5rem;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
         }
         
-        .wheel-pointer {
+        .dice-face::before {
+            content: '';
             position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-top: 50px solid var(--neon-red);
-            filter: drop-shadow(0 0 10px var(--neon-red));
-            z-index: 5;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            z-index: -1;
         }
+        
+        .dice-face-1 { transform: rotateY(0deg) translateZ(50px); }
+        .dice-face-2 { transform: rotateY(90deg) translateZ(50px); }
+        .dice-face-3 { transform: rotateX(90deg) translateZ(50px); }
+        .dice-face-4 { transform: rotateX(-90deg) translateZ(50px); }
+        .dice-face-5 { transform: rotateY(-90deg) translateZ(50px); }
+        .dice-face-6 { transform: rotateY(180deg) translateZ(50px); }
+        
+        .dot {
+            width: 15px;
+            height: 15px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .face-1 .dot { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        
+        .face-2 .dot:nth-child(1) { top: 25%; left: 25%; }
+        .face-2 .dot:nth-child(2) { bottom: 25%; right: 25%; }
+        
+        .face-3 .dot:nth-child(1) { top: 25%; left: 25%; }
+        .face-3 .dot:nth-child(2) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .face-3 .dot:nth-child(3) { bottom: 25%; right: 25%; }
+        
+        .face-4 .dot:nth-child(1) { top: 25%; left: 25%; }
+        .face-4 .dot:nth-child(2) { top: 25%; right: 25%; }
+        .face-4 .dot:nth-child(3) { bottom: 25%; left: 25%; }
+        .face-4 .dot:nth-child(4) { bottom: 25%; right: 25%; }
+        
+        .face-5 .dot:nth-child(1) { top: 25%; left: 25%; }
+        .face-5 .dot:nth-child(2) { top: 25%; right: 25%; }
+        .face-5 .dot:nth-child(3) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .face-5 .dot:nth-child(4) { bottom: 25%; left: 25%; }
+        .face-5 .dot:nth-child(5) { bottom: 25%; right: 25%; }
+        
+        .face-6 .dot:nth-child(1) { top: 25%; left: 25%; }
+        .face-6 .dot:nth-child(2) { top: 25%; right: 25%; }
+        .face-6 .dot:nth-child(3) { top: 50%; left: 25%; transform: translateY(-50%); }
+        .face-6 .dot:nth-child(4) { top: 50%; right: 25%; transform: translateY(-50%); }
+        .face-6 .dot:nth-child(5) { bottom: 25%; left: 25%; }
+        .face-6 .dot:nth-child(6) { bottom: 25%; right: 25%; }
         
         .particles {
             position: fixed;
@@ -351,9 +374,13 @@
                 font-size: 1rem;
             }
             
-            .wheel {
-                width: 280px;
-                height: 280px;
+            .dice {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .dice-face {
+                font-size: 2rem;
             }
         }
     </style>
@@ -379,13 +406,45 @@
             <a href="https://t.me/pr1s3" class="btn">Прайс</a>
             <a href="https://t.me/frogLIST" class="btn">Приписка</a>
             <a href="https://t.me/G1sWE" class="btn">Менеджер</a>
+            <a href="https://t.me/send?start=IV0omXVXJ468" class="btn" style="border-color: var(--neon-green); box-shadow: 0 0 10px var(--neon-green), inset 0 0 5px var(--neon-green);">Донат</a>
         </div>
         
-        <div class="wheel-container" id="wheel-container">
-            <button class="wheel-btn" id="spin-btn">КРУТИТЬ КОЛЕСО УДАЧИ</button>
-            <div class="wheel-pointer"></div>
-            <div class="wheel" id="wheel">
-                <div class="wheel-center"></div>
+        <div class="dice-container" id="dice-container">
+            <button class="dice-btn" id="roll-btn">БРОСИТЬ КУБИК</button>
+            <div class="dice" id="dice">
+                <div class="dice-face dice-face-1 face-1">
+                    <div class="dot"></div>
+                </div>
+                <div class="dice-face dice-face-2 face-2">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="dice-face dice-face-3 face-3">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="dice-face dice-face-4 face-4">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="dice-face dice-face-5 face-5">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="dice-face dice-face-6 face-6">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
             </div>
         </div>
         
@@ -395,7 +454,6 @@
     </div>
     
     <script>
-        // Загрузка
         window.addEventListener('DOMContentLoaded', () => {
             const progress = document.querySelector('.progress');
             const loader = document.querySelector('.loader');
@@ -414,107 +472,53 @@
                             loader.style.display = 'none';
                             mainContent.style.opacity = '1';
                             mainContent.style.transform = 'translateY(0)';
-                            document.querySelector('#wheel-container').style.display = 'block';
+                            document.querySelector('#dice-container').style.display = 'block';
                         }, 1000);
                     }, 500);
                 }
             }, 100);
             
-            // Создание частиц
             createParticles();
         });
-        
-        // Колесо фортуны
+
         document.addEventListener('DOMContentLoaded', () => {
-            const wheel = document.getElementById('wheel');
-            const spinBtn = document.getElementById('spin-btn');
-            const prizes = ['10% OFF', 'PRIZE', 'FREE', '50% OFF', 'LUCKY', 'BONUS', 'WIN!', 'TRY AGAIN'];
-            const colors = [
-                '#ff0000', '#ff3300', '#ff6600', '#ff9900', 
-                '#ffcc00', '#ffff00', '#ccff00', '#00ff00'
+            const dice = document.getElementById('dice');
+            const rollBtn = document.getElementById('roll-btn');
+            const prizes = [
+                "1! Ничего не выиграл",
+                "2! Попробуй ещё",
+                "3! Маленький приз",
+                "4! Средний приз",
+                "5! Крупный приз!",
+                "6! ДЖЕКПОТ!"
             ];
             
-            // Создаем секции колеса
-            prizes.forEach((prize, index) => {
-                const section = document.createElement('div');
-                section.className = 'wheel-section';
-                section.textContent = prize;
-                section.style.backgroundColor = colors[index];
-                const angle = (360 / prizes.length) * index;
-                section.style.transform = `rotate(${angle}deg)`;
-                
-                // Добавляем градиент для красоты
-                section.style.background = `linear-gradient(135deg, ${colors[index]}, ${darkenColor(colors[index], 20)})`;
-                
-                wheel.appendChild(section);
-            });
+            let canRoll = true;
             
-            let canSpin = true;
-            let currentRotation = 0;
-            
-            spinBtn.addEventListener('click', () => {
-                if (!canSpin) return;
+            rollBtn.addEventListener('click', () => {
+                if (!canRoll) return;
                 
-                canSpin = false;
-                spinBtn.disabled = true;
+                canRoll = false;
+                rollBtn.disabled = true;
                 
-                // Минимум 10 полных оборотов + случайный угол
-                const spinDegrees = 3600 + Math.floor(Math.random() * 360);
-                currentRotation += spinDegrees;
+                const randomRotations = Math.floor(Math.random() * 10) + 15;
+                const randomFace = Math.floor(Math.random() * 6) + 1;
+                const totalDegrees = randomRotations * 360 + (randomFace - 1) * 90;
                 
-                wheel.style.transform = `rotate(${currentRotation}deg)`;
-                
-                // Эффект ускорения/замедления
-                spinBtn.style.transform = 'scale(0.95)';
-                spinBtn.style.boxShadow = '0 0 10px var(--neon-blue)';
+                dice.style.transform = `rotateX(${totalDegrees}deg) rotateY(${totalDegrees}deg) rotateZ(${totalDegrees}deg)`;
                 
                 setTimeout(() => {
-                    spinBtn.style.transform = 'scale(1.05)';
-                    spinBtn.style.boxShadow = '0 0 30px var(--neon-blue)';
-                }, 2500);
-                
-                setTimeout(() => {
-                    const normalizedRotation = currentRotation % 360;
-                    const sectionAngle = 360 / prizes.length;
-                    const prizeIndex = Math.floor(((360 - normalizedRotation) % 360) / sectionAngle);
-                    
-                    // Конфетти при выигрыше
                     createConfetti();
                     
-                    // Вибрируем колесо
-                    wheel.style.transform = `rotate(${currentRotation}deg) translateX(5px)`;
                     setTimeout(() => {
-                        wheel.style.transform = `rotate(${currentRotation}deg) translateX(-5px)`;
-                        setTimeout(() => {
-                            wheel.style.transform = `rotate(${currentRotation}deg) translateX(0)`;
-                            
-                            setTimeout(() => {
-                                alert(`🎉 Вы выиграли: ${prizes[prizeIndex]}! 🎉`);
-                                canSpin = true;
-                                spinBtn.disabled = false;
-                            }, 500);
-                        }, 100);
-                    }, 100);
-                }, 5000);
+                        alert(prizes[randomFace - 1]);
+                        canRoll = true;
+                        rollBtn.disabled = false;
+                    }, 1000);
+                }, 2000);
             });
-            
-            // Функция для затемнения цвета
-            function darkenColor(color, percent) {
-                const num = parseInt(color.replace('#', ''), 16);
-                const amt = Math.round(2.55 * percent);
-                const R = (num >> 16) - amt;
-                const G = (num >> 8 & 0x00FF) - amt;
-                const B = (num & 0x0000FF) - amt;
-                return '#' + (
-                    0x1000000 +
-                    (R < 0 ? 0 : R) * 0x10000 +
-                    (G < 0 ? 0 : G) * 0x100 +
-                    (B < 0 ? 0 : B)
-                ).toString(16).slice(1);
-            }
         });
-        
-        // Создание частиц
+
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50;
@@ -537,8 +541,7 @@
                 particlesContainer.appendChild(particle);
             }
         }
-        
-        // Создание конфетти
+
         function createConfetti() {
             const container = document.getElementById('confetti-container');
             const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -557,14 +560,12 @@
                 
                 container.appendChild(confetti);
                 
-                // Удаляем конфетти после анимации
                 setTimeout(() => {
                     confetti.remove();
                 }, animationDuration * 1000);
             }
         }
-        
-        // Эффект при наведении на кнопки
+
         document.querySelectorAll('.btn').forEach(btn => {
             btn.addEventListener('mouseenter', () => {
                 const letters = '0123456789ABCDEF';
